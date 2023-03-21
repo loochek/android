@@ -47,10 +47,11 @@ class MainActivity : ComponentActivity() {
             val bgColor = Color(245, 245, 245)
 
             val systemUiController = rememberSystemUiController()
-                systemUiController.setSystemBarsColor(color = bgColor)
+            systemUiController.setSystemBarsColor(color = bgColor)
 
-            val colors = lightColors(primary=Color(118, 220, 143), secondary = Color(118, 220, 143))
-            MaterialTheme(colors=colors) {
+            val colors =
+                lightColors(primary = Color(118, 220, 143), secondary = Color(118, 220, 143))
+            MaterialTheme(colors = colors) {
                 LoginScreen(bgColor)
             }
         }
@@ -70,8 +71,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun LoginScreen(bgColor: Color) {
     val focusManager = LocalFocusManager.current
-    Surface(modifier = Modifier.fillMaxSize().clickable(interactionSource = MutableInteractionSource(), indication = null) { focusManager.clearFocus() }, color = bgColor) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) { focusManager.clearFocus() }, color = bgColor
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Logo()
             LoginSection()
         }
@@ -80,24 +91,30 @@ private fun LoginScreen(bgColor: Color) {
 
 @Preview(showBackground = true, device = Devices.PIXEL_3A)
 @Composable
-private fun Logo () {
+private fun Logo() {
     Column(modifier = Modifier.size(200.dp, 200.dp)) {
-        Image(painterResource(id = R.drawable.logo), null, modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .size(150.dp, 150.dp))
-        Image(painterResource(id = R.drawable.food_ninja), null, modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .size(100.dp, 20.dp))
-        Image(painterResource(id = R.drawable.motto), null, modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .size(100.dp, 20.dp))
+        Image(
+            painterResource(id = R.drawable.logo), null, modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .size(150.dp, 150.dp)
+        )
+        Image(
+            painterResource(id = R.drawable.food_ninja), null, modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .size(100.dp, 20.dp)
+        )
+        Image(
+            painterResource(id = R.drawable.motto), null, modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .size(100.dp, 20.dp)
+        )
     }
 }
 
 
 @Preview(showBackground = true, device = Devices.PIXEL_3A)
 @Composable
-private fun LoginSection () {
+private fun LoginSection() {
     var name by remember { mutableStateOf(TextFieldValue("")) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -105,9 +122,11 @@ private fun LoginSection () {
     var keepSignIn by remember { mutableStateOf(false) }
     var subscribeToSpecDeals by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 20.dp, vertical = 20.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 20.dp)
+    ) {
         val textFieldModifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20))
@@ -127,7 +146,7 @@ private fun LoginSection () {
             onValueChange = { name = it },
             singleLine = true,
             colors = textFieldColors,
-            leadingIcon = { Icon(imageVector=Icons.Filled.AccountCircle, null) }
+            leadingIcon = { Icon(imageVector = Icons.Filled.AccountCircle, null) }
         )
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -139,7 +158,7 @@ private fun LoginSection () {
             onValueChange = { email = it },
             singleLine = true,
             colors = textFieldColors,
-            leadingIcon = { Icon(imageVector=Icons.Filled.Email, null) }
+            leadingIcon = { Icon(imageVector = Icons.Filled.Email, null) }
         )
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -154,7 +173,8 @@ private fun LoginSection () {
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
-                val image = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val image =
+                    if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 // Please provide localized description for accessibility services
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
@@ -162,29 +182,50 @@ private fun LoginSection () {
                     Icon(imageVector = image, description)
                 }
             },
-            leadingIcon = { Icon(imageVector=Icons.Filled.Lock, null) }
+            leadingIcon = { Icon(imageVector = Icons.Filled.Lock, null) }
         )
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        LabelledCheckBox(checked = keepSignIn, onCheckedChange = { keepSignIn = it }, "Keep me signed in", modifier = Modifier.padding(horizontal = 6.dp))
+        LabelledCheckBox(
+            checked = keepSignIn,
+            onCheckedChange = { keepSignIn = it },
+            "Keep me signed in",
+            modifier = Modifier.padding(horizontal = 6.dp)
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
-        LabelledCheckBox(checked = subscribeToSpecDeals, onCheckedChange = { subscribeToSpecDeals = it }, "Email me about special pricing", modifier = Modifier.padding(horizontal = 6.dp))
+        LabelledCheckBox(
+            checked = subscribeToSpecDeals,
+            onCheckedChange = { subscribeToSpecDeals = it },
+            "Email me about special pricing",
+            modifier = Modifier.padding(horizontal = 6.dp)
+        )
 
         Spacer(Modifier.size(30.dp))
 
-        Button(onClick = { /*TODO*/ }, modifier = Modifier.size(150.dp, 50.dp).align(Alignment.CenterHorizontally).clip(shape = RoundedCornerShape(30))) {
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .size(150.dp, 50.dp)
+                .align(Alignment.CenterHorizontally)
+                .clip(shape = RoundedCornerShape(30))
+        ) {
             Text("Register")
         }
 
         Spacer(Modifier.size(30.dp))
 
-        Text(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(interactionSource = MutableInteractionSource(), indication = rememberRipple(
-            bounded = true,
-            radius = 100.dp,
-            color = MaterialTheme.colors.primary
-        )) {}, text = "Already have an account?")
+        Text(modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .clickable(
+                interactionSource = MutableInteractionSource(), indication = rememberRipple(
+                    bounded = true,
+                    radius = 100.dp,
+                    color = MaterialTheme.colors.primary
+                )
+            ) {}, text = "Already have an account?"
+        )
 
     }
 }
@@ -238,7 +279,7 @@ fun rememberIsKeyboardOpen(): State<Boolean> {
         val listener = ViewTreeObserver.OnGlobalLayoutListener { value = view.isKeyboardOpen() }
         viewTreeObserver.addOnGlobalLayoutListener(listener)
 
-        awaitDispose { viewTreeObserver.removeOnGlobalLayoutListener(listener)  }
+        awaitDispose { viewTreeObserver.removeOnGlobalLayoutListener(listener) }
     }
 }
 
