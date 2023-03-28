@@ -11,4 +11,7 @@
     <string name="email_special_pricing">Email me about special pricing</string>
     <string name="register">Register</string>
     <string name="already_have_account">Already have an account?</string>
+    <string name="foodninja_logo">FoodNinja logo</string>
+    <string name="foodninja">FoodNinja</string>
+    <string name="foodninja_motto">Deliver favourite food</string>
 </resources>
