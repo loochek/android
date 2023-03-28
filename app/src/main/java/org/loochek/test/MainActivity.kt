@@ -29,13 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -59,12 +59,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        Toast.makeText(applicationContext, "Welcome back!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, getString(R.string.welcome_back), Toast.LENGTH_SHORT).show()
     }
 
     override fun onPause() {
         super.onPause()
-        Toast.makeText(applicationContext, "Goodbye!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, getString(R.string.goodbye), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -142,7 +142,7 @@ private fun LoginSection() {
 
         TextField(value = name,
             modifier = textFieldModifier,
-            label = { Text("Your name") },
+            label = { Text(stringResource(R.string.your_name)) },
             onValueChange = { name = it },
             singleLine = true,
             colors = textFieldColors,
@@ -154,7 +154,7 @@ private fun LoginSection() {
         TextField(
             value = email,
             modifier = textFieldModifier,
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email)) },
             onValueChange = { email = it },
             singleLine = true,
             colors = textFieldColors,
@@ -166,7 +166,7 @@ private fun LoginSection() {
         TextField(
             value = password,
             modifier = textFieldModifier,
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password)) },
             onValueChange = { password = it },
             singleLine = true,
             colors = textFieldColors,
@@ -176,7 +176,8 @@ private fun LoginSection() {
                 val image =
                     if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 // Please provide localized description for accessibility services
-                val description = if (passwordVisible) "Hide password" else "Show password"
+                val description = if (passwordVisible) stringResource(R.string.hide_password) else stringResource(
+                                    R.string.show_password)
 
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(imageVector = image, description)
@@ -190,7 +191,7 @@ private fun LoginSection() {
         LabelledCheckBox(
             checked = keepSignIn,
             onCheckedChange = { keepSignIn = it },
-            "Keep me signed in",
+            stringResource(R.string.keep_sign_in),
             modifier = Modifier.padding(horizontal = 6.dp)
         )
 
@@ -198,7 +199,7 @@ private fun LoginSection() {
         LabelledCheckBox(
             checked = subscribeToSpecDeals,
             onCheckedChange = { subscribeToSpecDeals = it },
-            "Email me about special pricing",
+            stringResource(R.string.email_special_pricing),
             modifier = Modifier.padding(horizontal = 6.dp)
         )
 
@@ -211,7 +212,7 @@ private fun LoginSection() {
                 .align(Alignment.CenterHorizontally)
                 .clip(shape = RoundedCornerShape(30))
         ) {
-            Text("Register")
+            Text(stringResource(R.string.register))
         }
 
         Spacer(Modifier.size(30.dp))
@@ -224,7 +225,7 @@ private fun LoginSection() {
                     radius = 100.dp,
                     color = MaterialTheme.colors.primary
                 )
-            ) {}, text = "Already have an account?"
+            ) {}, text = stringResource(R.string.already_have_account)
         )
 
     }
