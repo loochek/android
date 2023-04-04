@@ -3,7 +3,10 @@ package org.loochek.test.loginscreen
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.loochek.test.MainActivity
 
@@ -29,9 +32,16 @@ data class LoginScreenViewState(
     val notifySpecialPricing: Boolean = true,
 )
 
-class LoginScreenViewModel(private val activity: MainActivity?) : ViewModel() {
+sealed class LoginScreenViewAction {
+    class ShowToast(val text: String, val duration: Int) : LoginScreenViewAction()
+}
+
+class LoginScreenViewModel() : ViewModel() {
     private val _viewState = MutableStateFlow(LoginScreenViewState())
     val viewState = _viewState.asStateFlow();
+
+    private val _viewAction = MutableSharedFlow<LoginScreenViewAction>(extraBufferCapacity = 64)
+    val viewAction = _viewAction.asSharedFlow();
 
     fun handleEvent(event: LoginScreenEvent) {
         when (event) {
@@ -60,19 +70,18 @@ class LoginScreenViewModel(private val activity: MainActivity?) : ViewModel() {
             }
 
             LoginScreenEvent.AlreadyHaveAccountClicked -> {
-                Toast.makeText(activity, "500 Internal Server Error", Toast.LENGTH_SHORT).show()
+                assert(_viewAction.tryEmit(LoginScreenViewAction.ShowToast(
+                    "500 Internal Server Error",
+                    Toast.LENGTH_SHORT
+                )))
             }
 
             LoginScreenEvent.RegisterClicked -> {
-                Toast.makeText(activity, "501 Not Implemented", Toast.LENGTH_SHORT).show()
+                assert(_viewAction.tryEmit(LoginScreenViewAction.ShowToast(
+                    "501 Not Implemented",
+                    Toast.LENGTH_SHORT
+                )))
             }
         }
-    }
-}
-
-class LoginScreenViewModelFactory(private val activity: MainActivity): ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return LoginScreenViewModel(activity) as T
     }
 }

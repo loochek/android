@@ -1,5 +1,6 @@
 package org.loochek.test.loginscreen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,53 +27,54 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 import org.loochek.test.MainActivity
 import org.loochek.test.utils.LabelledCheckBox
 import org.loochek.test.utils.clearFocusOnKeyboardDismiss
 import org.loochek.test.R
 
-val LocalViewState = compositionLocalOf<LoginScreenViewState> { LoginScreenViewState() }
-val LocalViewModel = compositionLocalOf<LoginScreenViewModel> { LoginScreenViewModel(null) }
-
 @Composable
 fun LoginScreen(bgColor: Color,
-                activity: MainActivity,
-                loginScreenViewModel: LoginScreenViewModel =
-                    viewModel(factory = LoginScreenViewModelFactory(activity))
+                viewModel: LoginScreenViewModel = viewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val loginScreenViewState by loginScreenViewModel.viewState.collectAsState()
+    val viewState by viewModel.viewState.collectAsState()
 
-    CompositionLocalProvider(
-        LocalViewState provides loginScreenViewState,
-        LocalViewModel provides loginScreenViewModel
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.viewAction.collect() {
+                viewAction ->
+            Toast.makeText(
+                context,
+                (viewAction as LoginScreenViewAction.ShowToast).text,
+                (viewAction as LoginScreenViewAction.ShowToast).duration,
+            ).show()
+        }
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = MutableInteractionSource(),
+                indication = null
+            ) { focusManager.clearFocus() }, color = bgColor
     ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = MutableInteractionSource(),
-                    indication = null
-                ) { focusManager.clearFocus() }, color = bgColor
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Logo()
-                LoginSection()
-            }
+            Logo()
+            LoginSection(viewModel, viewState)
         }
     }
 }
 
-@Preview(showBackground = true, device = Devices.PIXEL_3A)
 @Composable
-fun LoginSection() {
-    val viewModel = LocalViewModel.current
-    val viewState = LocalViewState.current
-
+fun LoginSection(viewModel: LoginScreenViewModel, viewState: LoginScreenViewState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

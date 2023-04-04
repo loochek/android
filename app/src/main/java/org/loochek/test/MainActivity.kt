@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
             val colors =
                 lightColors(primary = Color(118, 220, 143), secondary = Color(118, 220, 143))
             MaterialTheme(colors = colors) {
-                LoginScreen(bgColor, this)
+                LoginScreen(bgColor)
             }
         }
     }
