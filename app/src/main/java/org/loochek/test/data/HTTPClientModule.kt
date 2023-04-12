@@ -1,4 +1,4 @@
-package org.loochek.test.catalogscreen
+package org.loochek.test.data
 
 import dagger.Module
 import dagger.Provides
@@ -8,6 +8,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -16,7 +17,11 @@ class HTTPClientModule {
     fun provideHttpClient(): HttpClient {
         return HttpClient() {
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    explicitNulls = false
+                })
             }
 
             install(HttpTimeout) {

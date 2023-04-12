@@ -1,5 +1,6 @@
 package org.loochek.test.catalogscreen
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -15,12 +16,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import org.loochek.test.data.Restaurant
 
 @Composable
 fun CatalogScreen(bgColor: Color, viewModel: CatalogScreenViewModel = viewModel()
 ) {
     val focusManager = LocalFocusManager.current
     val viewState by viewModel.viewState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.viewAction.collect() {
+                viewAction ->
+            Toast.makeText(
+                context,
+                (viewAction as CatalogScreenViewAction.ShowToast).text,
+                (viewAction as CatalogScreenViewAction.ShowToast).duration,
+            ).show()
+        }
+    }
 
     Surface(
         modifier = Modifier
@@ -43,14 +58,14 @@ fun CatalogScreen(bgColor: Color, viewModel: CatalogScreenViewModel = viewModel(
             }
 
             Spacer(Modifier.size(10.dp))
-            Catalog(viewModel, viewState)
+            Catalog(viewState)
         }
     }
 }
 
 @Composable
-fun Catalog(viewModel: CatalogScreenViewModel, viewState: CatalogScreenViewState) {
-    if (!viewState.loaded) {
+fun Catalog(viewState: CatalogScreenViewState) {
+    if (viewState.nearest.size + viewState.popular.size == 0) {
         Text(viewState.status)
     } else {
         Text("Nearest restraunts:")
