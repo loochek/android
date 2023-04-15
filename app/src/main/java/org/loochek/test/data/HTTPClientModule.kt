@@ -18,7 +18,6 @@ class HTTPClientModule {
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
     fun provideHttpClient(): HttpClient {
-        Log.i("provideHttpClient", ".")
         return HttpClient() {
             install(ContentNegotiation) {
                 json(Json {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -53,6 +54,10 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("catalog") {
+                        BackHandler(true) {
+                            // Do nothing
+                        }
+
                         val viewModel = hiltViewModel<CatalogScreenViewModel>()
                         CatalogScreen(bgColor, viewModel, navController)
                     }
