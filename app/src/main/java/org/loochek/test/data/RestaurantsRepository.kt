@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 
-class RestrauntsRepository @Inject constructor(
+class RestaurantsRepository @Inject constructor(
     private val httpClient: HttpClient,
     private val dbDao: RestaurantsDAO
 ) {
@@ -30,8 +30,14 @@ class RestrauntsRepository @Inject constructor(
             emit(actualResponse.copy(actual = true, updateError = false))
 
             dbDao.deleteAllRestaurants()
-            dbDao.insertRestaurants(*actualResponse.nearest.map {it.copy(placement = RestaurantPlacement.Nearest)}.toTypedArray())
-            dbDao.insertRestaurants(*actualResponse.popular.map {it.copy(placement = RestaurantPlacement.Popular, id = it.id + 10)}.toTypedArray())
+
+            dbDao.insertRestaurants(*actualResponse.nearest.map {
+                it.copy(placement = RestaurantPlacement.Nearest)
+            }.toTypedArray())
+
+            dbDao.insertRestaurants(*actualResponse.popular.map {
+                it.copy(placement = RestaurantPlacement.Popular, id = it.id + 10)
+            }.toTypedArray())
         } catch (e: Exception) {
             Log.i("Aboba", e.toString())
             emit(RestaurantCatalogResponse(listOf(), listOf(), null,

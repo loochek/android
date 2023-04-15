@@ -32,7 +32,7 @@ fun CatalogScreen(bgColor: Color, viewModel: CatalogScreenViewModel = viewModel(
             Toast.makeText(
                 context,
                 (viewAction as CatalogScreenViewAction.ShowToast).text,
-                (viewAction as CatalogScreenViewAction.ShowToast).duration,
+                viewAction.duration,
             ).show()
         }
     }

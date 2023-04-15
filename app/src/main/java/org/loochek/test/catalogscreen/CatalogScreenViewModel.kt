@@ -4,12 +4,11 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.call.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.loochek.test.data.Restaurant
-import org.loochek.test.data.RestrauntsRepository
+import org.loochek.test.data.RestaurantsRepository
 
 import javax.inject.Inject
 
@@ -28,7 +27,7 @@ sealed class CatalogScreenViewAction {
 }
 
 @HiltViewModel
-class CatalogScreenViewModel @Inject constructor(private val repository: RestrauntsRepository) : ViewModel() {
+class CatalogScreenViewModel @Inject constructor(private val repository: RestaurantsRepository) : ViewModel() {
     private val _viewState = MutableStateFlow(CatalogScreenViewState())
     val viewState = _viewState.asStateFlow();
 

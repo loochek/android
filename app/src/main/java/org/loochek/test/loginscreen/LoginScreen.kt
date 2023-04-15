@@ -50,7 +50,7 @@ fun LoginScreen(bgColor: Color,
             Toast.makeText(
                 context,
                 (viewAction as LoginScreenViewAction.ShowToast).text,
-                (viewAction as LoginScreenViewAction.ShowToast).duration,
+                viewAction.duration,
             ).show()
         }
     }
