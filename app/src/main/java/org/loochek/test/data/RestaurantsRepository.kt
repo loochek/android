@@ -13,37 +13,48 @@ class RestaurantsRepository @Inject constructor(
     private val httpClient: HttpClient,
     private val dbDao: RestaurantsDAO
 ) {
-    suspend fun getCatalogResponse(): Flow<RestaurantCatalogResponse>  = flow {
+    private var updatedOnce = false
+
+    suspend fun getCatalogResponse(forceUpdate: Boolean = false): Flow<RestaurantCatalogResponse> = flow {
         // Return cached version
         emit(RestaurantCatalogResponse(
             dbDao.getNearestRestaurants(),
             dbDao.getPopularRestaurants(),
             null,
-            actual = false,
+            actual = updatedOnce,
             updateError = false
         ))
 
-        // Try to fetch actual version
-        try {
-            val actualResponse = httpClient.get("http://195.2.84.138:8081/catalog")
-                .body<RestaurantCatalogResponse>()
-            emit(actualResponse.copy(actual = true, updateError = false))
+        if (!updatedOnce || forceUpdate) {
+            // Try to fetch actual version
+            try {
+                var actualResponse = httpClient.get("http://195.2.84.138:8081/catalog")
+                    .body<RestaurantCatalogResponse>()
+                actualResponse = actualResponse.copy(
+                    nearest=actualResponse.nearest.map {
+                        it.copy(placement = RestaurantPlacement.Nearest)
+                    },
+                    popular=actualResponse.popular.map {
+                        it.copy(
+                            placement = RestaurantPlacement.Popular,
+                            id = it.id + 10
+                        )
+                    }
+                )
 
-            dbDao.deleteAllRestaurants()
+                emit(actualResponse.copy(actual = true, updateError = false))
 
-            dbDao.insertRestaurants(*actualResponse.nearest.map {
-                it.copy(placement = RestaurantPlacement.Nearest)
-            }.toTypedArray())
+                dbDao.deleteAllRestaurants()
+                dbDao.insertRestaurants(*actualResponse.nearest.toTypedArray())
+                dbDao.insertRestaurants(*actualResponse.popular.toTypedArray())
 
-            dbDao.insertRestaurants(*actualResponse.popular.map {
-                it.copy(placement = RestaurantPlacement.Popular, id = it.id + 10)
-            }.toTypedArray())
-        } catch (e: Exception) {
-            Log.i("Aboba", e.toString())
-            emit(RestaurantCatalogResponse(listOf(), listOf(), null,
-                actual = false,
-                updateError = true
-            ))
+                updatedOnce = true;
+            } catch (e: Exception) {
+                emit(RestaurantCatalogResponse(listOf(), listOf(), null,
+                    actual = false,
+                    updateError = true
+                ))
+            }
         }
     }
 }

@@ -41,14 +41,14 @@ class CatalogScreenViewModel @Inject constructor(private val repository: Restaur
     fun handleEvent(event: CatalogScreenEvent) {
         when (event) {
             is CatalogScreenEvent.UpdateButtonClicked -> {
-                updateCatalog()
+                updateCatalog(forceUpdate=true)
             }
         }
     }
 
-    private fun updateCatalog() {
+    private fun updateCatalog(forceUpdate: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getCatalogResponse().collect { response ->
+            repository.getCatalogResponse(forceUpdate).collect { response ->
                 if (response.updateError == true) {
                     _viewState.emit(_viewState.value.copy(status = "Error!"))
                     _viewAction.tryEmit(

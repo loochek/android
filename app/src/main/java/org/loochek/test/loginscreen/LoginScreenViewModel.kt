@@ -34,6 +34,7 @@ data class LoginScreenViewState(
 
 sealed class LoginScreenViewAction {
     class ShowToast(val text: String, val duration: Int) : LoginScreenViewAction()
+    class Navigate(val location: String) : LoginScreenViewAction()
 }
 
 class LoginScreenViewModel() : ViewModel() {
@@ -77,10 +78,14 @@ class LoginScreenViewModel() : ViewModel() {
             }
 
             LoginScreenEvent.RegisterClicked -> {
-                assert(_viewAction.tryEmit(LoginScreenViewAction.ShowToast(
-                    "501 Not Implemented",
-                    Toast.LENGTH_SHORT
-                )))
+                if (viewState.value.name == "admin" && viewState.value.password == "admin") {
+                    assert(_viewAction.tryEmit(LoginScreenViewAction.Navigate("catalog")))
+                } else {
+                    assert(_viewAction.tryEmit(LoginScreenViewAction.ShowToast(
+                        "500 Internal Server Error",
+                        Toast.LENGTH_SHORT
+                    )))
+                }
             }
         }
     }

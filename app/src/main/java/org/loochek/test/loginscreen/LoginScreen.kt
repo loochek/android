@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -36,10 +37,11 @@ import org.loochek.test.utils.clearFocusOnKeyboardDismiss
 import org.loochek.test.R
 
 @Composable
-fun LoginScreen(bgColor: Color,
-                viewModel: LoginScreenViewModel = viewModel()
+fun LoginScreen(
+    bgColor: Color,
+    viewModel: LoginScreenViewModel = viewModel(),
+    navController: NavController
 ) {
-    val focusManager = LocalFocusManager.current
     val viewState by viewModel.viewState.collectAsState()
 
     val context = LocalContext.current
@@ -47,21 +49,31 @@ fun LoginScreen(bgColor: Color,
     LaunchedEffect(Unit) {
         viewModel.viewAction.collect() {
                 viewAction ->
-            Toast.makeText(
-                context,
-                (viewAction as LoginScreenViewAction.ShowToast).text,
-                viewAction.duration,
-            ).show()
+            when (viewAction) {
+                is LoginScreenViewAction.Navigate -> {
+                    navController.navigate(viewAction.location)
+                }
+
+                is LoginScreenViewAction.ShowToast -> {
+                    Toast.makeText(
+                        context,
+                        viewAction.text,
+                        viewAction.duration,
+                    ).show()
+                }
+            }
         }
     }
 
+    val focusManager = LocalFocusManager.current
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .clickable(
                 interactionSource = MutableInteractionSource(),
                 indication = null
-            ) { focusManager.clearFocus() }, color = bgColor
+            ) { focusManager.clearFocus() },
+        color = bgColor
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,7 +86,9 @@ fun LoginScreen(bgColor: Color,
 }
 
 @Composable
-fun LoginSection(viewModel: LoginScreenViewModel, viewState: LoginScreenViewState) {
+fun LoginSection(viewModel: LoginScreenViewModel,
+                 viewState: LoginScreenViewState
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

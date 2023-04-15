@@ -14,10 +14,10 @@ enum class RestaurantPlacement(val placement: Int){
 @Serializable
 @Entity(tableName = "restaurants")
 data class Restaurant(
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "deliveryTime") val deliveryTime: String,
-    @ColumnInfo(name = "image") val image: String,
+    @PrimaryKey val id: Int = 0,
+    @ColumnInfo(name = "name") val name: String = "",
+    @ColumnInfo(name = "deliveryTime") val deliveryTime: String = "",
+    @ColumnInfo(name = "image") val image: String = "",
     // Not present in API response - DB only
     @ColumnInfo(name = "placement") val placement: RestaurantPlacement? = null
 )

@@ -1,10 +1,12 @@
 package org.loochek.test.catalogscreen
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,15 +15,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import org.loochek.test.data.Restaurant
+import org.loochek.test.data.RestaurantPlacement
 
 @Composable
-fun CatalogScreen(bgColor: Color, viewModel: CatalogScreenViewModel = viewModel()
+fun CatalogScreen(
+    bgColor: Color,
+    viewModel: CatalogScreenViewModel = viewModel(),
+    navController: NavController
 ) {
-    val focusManager = LocalFocusManager.current
     val viewState by viewModel.viewState.collectAsState()
 
     val context = LocalContext.current
@@ -38,12 +44,7 @@ fun CatalogScreen(bgColor: Color, viewModel: CatalogScreenViewModel = viewModel(
     }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                indication = null
-            ) { focusManager.clearFocus() },
+        modifier = Modifier.fillMaxSize(),
         color = bgColor
     ) {
         Column(
@@ -58,13 +59,13 @@ fun CatalogScreen(bgColor: Color, viewModel: CatalogScreenViewModel = viewModel(
             }
 
             Spacer(Modifier.size(10.dp))
-            Catalog(viewState)
+            Catalog(viewState, navController)
         }
     }
 }
 
 @Composable
-fun Catalog(viewState: CatalogScreenViewState) {
+fun Catalog(viewState: CatalogScreenViewState, navController: NavController) {
     if (viewState.nearest.size + viewState.popular.size == 0) {
         Text(viewState.status)
     } else {
@@ -72,21 +73,35 @@ fun Catalog(viewState: CatalogScreenViewState) {
         Spacer(Modifier.size(10.dp))
 
         for (restaurant in viewState.nearest) {
-            RestaurantEntry(restaurant)
+            RestaurantEntry(restaurant, navController)
         }
 
         Text("Popular restraunts:")
         Spacer(Modifier.size(10.dp))
 
         for (restaurant in viewState.popular) {
-            RestaurantEntry(restaurant)
+            RestaurantEntry(restaurant, navController)
         }
     }
 }
 
 @Composable
-fun RestaurantEntry(restaurant: Restaurant) {
-    Card {
+fun RestaurantEntry(restaurant: Restaurant, navController: NavController) {
+    Card (modifier = Modifier.clickable(
+        interactionSource = MutableInteractionSource(), indication = rememberRipple(
+            bounded = true,
+            radius = 100.dp,
+            color = MaterialTheme.colors.primary
+        )) {
+            val placement = when (restaurant.placement) {
+                RestaurantPlacement.Nearest -> "nearest"
+                RestaurantPlacement.Popular -> "popular"
+                else -> "dummy"
+            }
+
+            navController.navigate("detail/${restaurant.id}/${placement}")
+        }
+    ) {
         Row(modifier = Modifier
             .fillMaxWidth()) {
             AsyncImage(
